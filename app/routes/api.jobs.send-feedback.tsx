@@ -1,4 +1,4 @@
-import { json, type ActionFunctionArgs } from "react-router";
+import { type ActionFunctionArgs } from "react-router";
 import { sendScheduledFeedbackEmails } from "../jobs/sendFeedbackEmails.server";
 
 /**
@@ -16,15 +16,15 @@ export async function action({ request }: ActionFunctionArgs) {
     const cronSecret = process.env.CRON_SECRET;
 
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-      return json({ error: "Unauthorized" }, { status: 401 });
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const result = await sendScheduledFeedbackEmails();
 
-    return json(result);
+    return Response.json(result);
   } catch (error) {
     console.error("Error running feedback job:", error);
-    return json(
+    return Response.json(
       {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
@@ -35,5 +35,5 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export async function loader() {
-  return json({ message: "Use POST to trigger the job" }, { status: 405 });
+  return Response.json({ message: "Use POST to trigger the job" }, { status: 405 });
 }

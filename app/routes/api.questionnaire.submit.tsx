@@ -1,4 +1,4 @@
-import { json, type ActionFunctionArgs } from "react-router";
+import { type ActionFunctionArgs } from "react-router";
 import { PrismaClient } from "@prisma/client";
 import { authenticate } from "../shopify.server";
 import {
@@ -31,7 +31,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
     // Validate required fields
     if (!orderId || !dogName || !breed || !email) {
-      return json(
+      return Response.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
@@ -75,13 +75,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
     await addOrderNote(request, shopifyOrderId, noteText);
 
-    return json({
+    return Response.json({
       success: true,
       questionnaireId: questionnaire.id,
     });
   } catch (error) {
     console.error("Error submitting questionnaire:", error);
-    return json(
+    return Response.json(
       { error: "Failed to submit questionnaire" },
       { status: 500 }
     );

@@ -1,4 +1,4 @@
-import { json, type ActionFunctionArgs } from "react-router";
+import { type ActionFunctionArgs } from "react-router";
 import { authenticate } from "../shopify.server";
 import { PrismaClient } from "@prisma/client";
 
@@ -55,9 +55,9 @@ export async function action({ request }: ActionFunctionArgs) {
     // Note: The actual email sending will be handled by a cron job
     // that checks for fulfillments where feedbackScheduledFor <= now
 
-    return json({ success: true, trackingId: tracking.id });
+    return Response.json({ success: true, trackingId: tracking.id });
   } catch (error) {
     console.error("Error processing fulfillment webhook:", error);
-    return json({ error: "Webhook processing failed" }, { status: 500 });
+    return Response.json({ error: "Webhook processing failed" }, { status: 500 });
   }
 }

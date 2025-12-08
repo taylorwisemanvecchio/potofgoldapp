@@ -1,4 +1,4 @@
-import { json, type LoaderFunctionArgs } from "react-router";
+import { type LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
 import { Page, Layout, Card, DataTable, Badge, Text } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
@@ -20,7 +20,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     },
   });
 
-  return json({ subscriptions });
+  return Response.json({ subscriptions });
 }
 
 export default function Subscriptions() {

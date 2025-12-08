@@ -1,4 +1,4 @@
-import { json, type LoaderFunctionArgs } from "react-router";
+import { type LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
 import { SubscriptionQuestionnaire } from "../components/SubscriptionQuestionnaire";
 
@@ -9,7 +9,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Response("Not Found", { status: 404 });
   }
 
-  return json({ orderId });
+  return Response.json({ orderId });
 }
 
 export default function QuestionnairePage() {
