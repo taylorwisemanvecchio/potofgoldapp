@@ -30,3 +30,85 @@ model Session {
   collaborator  Boolean?  @default(false)
   emailVerified Boolean?  @default(false)
 }
+
+model SubscriptionQuestionnaire {
+  id                String   @id @default(uuid())
+  orderId           String   @unique
+  shopifyOrderId    String?
+  customerId        String?
+
+  // Dog Information
+  dogName           String
+  dogGender         String   // "male", "female", "other"
+  dogSize           String   // "small", "medium", "large"
+  breed             String
+  birthday          DateTime?
+  adoptionDay       DateTime?
+
+  // Preferences
+  toyPreference     String   // "plush", "durable", "mix"
+  allergies         String   // "chicken", "turkey", "beef", "none" (comma-separated)
+
+  // Contact & Subscription
+  email             String
+  subscriptionPlan  String   // "monthly", "6-month", "12-month"
+
+  // Metadata
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  feedbacks         ProductFeedback[]
+  aiRecommendations AIRecommendation[]
+}
+
+model ProductFeedback {
+  id                      String   @id @default(uuid())
+  questionnaireId         String
+  questionnaire           SubscriptionQuestionnaire @relation(fields: [questionnaireId], references: [id])
+
+  fulfillmentId           String
+  productId               String
+  productTitle            String
+  productImageUrl         String?
+
+  rating                  Int?     // 1-5 scale
+  comments                String?
+
+  emailSentAt             DateTime?
+  respondedAt             DateTime?
+
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+}
+
+model AIRecommendation {
+  id                String   @id @default(uuid())
+  questionnaireId   String
+  questionnaire     SubscriptionQuestionnaire @relation(fields: [questionnaireId], references: [id])
+
+  monthYear         String   // "2025-01" format for tracking monthly recommendations
+
+  recommendedProducts String // JSON array of product recommendations with reasoning
+  openAIResponse    String   // Full OpenAI API response for debugging
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([questionnaireId, monthYear])
+}
+
+model FulfillmentTracking {
+  id                String   @id @default(uuid())
+  shopifyFulfillmentId String @unique
+  orderId           String
+
+  status            String   // "pending", "fulfilled", "feedback_sent", "feedback_received"
+  fulfilledAt       DateTime?
+  feedbackScheduledFor DateTime?
+  feedbackSentAt    DateTime?
+
+  products          String   // JSON array of products in this fulfillment
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
