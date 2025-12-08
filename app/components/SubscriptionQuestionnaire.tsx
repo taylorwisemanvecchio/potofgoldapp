@@ -1,15 +1,4 @@
 import { useState } from "react";
-import {
-  Form,
-  FormLayout,
-  TextField,
-  Select,
-  Button,
-  Card,
-  Layout,
-  Page,
-  Banner,
-} from "@shopify/polaris";
 
 interface SubscriptionQuestionnaireProps {
   orderId: string;
@@ -52,7 +41,8 @@ export function SubscriptionQuestionnaire({
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setIsSubmitting(true);
     setSubmitError(null);
 
@@ -84,186 +74,167 @@ export function SubscriptionQuestionnaire({
 
   if (submitSuccess) {
     return (
-      <Page title="Subscription Questionnaire">
-        <Layout>
-          <Layout.Section>
-            <Banner
-              title="Thank you!"
-              tone="success"
-              onDismiss={() => setSubmitSuccess(false)}
-            >
-              <p>
-                Your subscription questionnaire has been submitted
-                successfully. We'll use this information to curate the perfect
-                box for {formData.dogName}!
-              </p>
-            </Banner>
-          </Layout.Section>
-        </Layout>
-      </Page>
+      <s-page heading="Subscription Questionnaire">
+        <s-banner tone="success">
+          <p>
+            Thank you! Your subscription questionnaire has been submitted
+            successfully. We'll use this information to curate the perfect box
+            for {formData.dogName}!
+          </p>
+        </s-banner>
+      </s-page>
     );
   }
 
   return (
-    <Page title="🐕 Dog Toy Subscription Questionnaire">
-      <Layout>
-        <Layout.Section>
-          {submitError && (
-            <Banner title="Error" tone="critical">
-              <p>{submitError}</p>
-            </Banner>
-          )}
+    <s-page heading="🐕 Dog Toy Subscription Questionnaire">
+      {submitError && (
+        <s-banner tone="critical">
+          <p>{submitError}</p>
+        </s-banner>
+      )}
 
-          <Card>
-            <Form onSubmit={handleSubmit}>
-              <FormLayout>
-                <FormLayout.Group title="About Your Dog">
-                  <TextField
-                    label="Dog's Name"
-                    value={formData.dogName}
-                    onChange={(value) =>
-                      setFormData({ ...formData, dogName: value })
-                    }
-                    autoComplete="off"
-                    requiredIndicator
-                  />
+      <s-section>
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <s-section heading="About Your Dog">
+            <s-stack direction="block" gap="base">
+              <s-textfield
+                label="Dog's Name *"
+                value={formData.dogName}
+                onInput={(e: any) =>
+                  setFormData({ ...formData, dogName: e.target.value })
+                }
+                required
+              />
 
-                  <Select
-                    label="Gender"
-                    options={[
-                      { label: "Male", value: "male" },
-                      { label: "Female", value: "female" },
-                      { label: "Other", value: "other" },
-                    ]}
-                    value={formData.dogGender}
-                    onChange={(value) =>
-                      setFormData({ ...formData, dogGender: value })
-                    }
-                  />
+              <s-select
+                label="Gender"
+                value={formData.dogGender}
+                onChange={(e: any) =>
+                  setFormData({ ...formData, dogGender: e.target.value })
+                }
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </s-select>
 
-                  <Select
-                    label="Size"
-                    options={[
-                      { label: "Small (under 25 lbs)", value: "small" },
-                      { label: "Medium (25-50 lbs)", value: "medium" },
-                      { label: "Large (over 50 lbs)", value: "large" },
-                    ]}
-                    value={formData.dogSize}
-                    onChange={(value) =>
-                      setFormData({ ...formData, dogSize: value })
-                    }
-                  />
+              <s-select
+                label="Size"
+                value={formData.dogSize}
+                onChange={(e: any) =>
+                  setFormData({ ...formData, dogSize: e.target.value })
+                }
+              >
+                <option value="small">Small (under 25 lbs)</option>
+                <option value="medium">Medium (25-50 lbs)</option>
+                <option value="large">Large (over 50 lbs)</option>
+              </s-select>
 
-                  <TextField
-                    label="Breed"
-                    value={formData.breed}
-                    onChange={(value) =>
-                      setFormData({ ...formData, breed: value })
-                    }
-                    autoComplete="off"
-                    requiredIndicator
-                  />
-                </FormLayout.Group>
+              <s-textfield
+                label="Breed *"
+                value={formData.breed}
+                onInput={(e: any) =>
+                  setFormData({ ...formData, breed: e.target.value })
+                }
+                required
+              />
+            </s-stack>
+          </s-section>
 
-                <FormLayout.Group title="Special Dates">
-                  <TextField
-                    label="Birthday (optional)"
-                    type="date"
-                    value={formData.birthday}
-                    onChange={(value) =>
-                      setFormData({ ...formData, birthday: value })
-                    }
-                    autoComplete="off"
-                  />
+          <s-section heading="Special Dates">
+            <s-stack direction="block" gap="base">
+              <s-textfield
+                label="Birthday (optional)"
+                type="date"
+                value={formData.birthday}
+                onInput={(e: any) =>
+                  setFormData({ ...formData, birthday: e.target.value })
+                }
+              />
 
-                  <TextField
-                    label="Adoption Day (optional)"
-                    type="date"
-                    value={formData.adoptionDay}
-                    onChange={(value) =>
-                      setFormData({ ...formData, adoptionDay: value })
-                    }
-                    autoComplete="off"
-                  />
-                </FormLayout.Group>
+              <s-textfield
+                label="Adoption Day (optional)"
+                type="date"
+                value={formData.adoptionDay}
+                onInput={(e: any) =>
+                  setFormData({ ...formData, adoptionDay: e.target.value })
+                }
+              />
+            </s-stack>
+          </s-section>
 
-                <FormLayout.Group title="Preferences">
-                  <Select
-                    label="Preferred Toy Type"
-                    options={[
-                      { label: "Plush Toys", value: "plush" },
-                      { label: "Durable/Tough Toys", value: "durable" },
-                      { label: "Mix of Both", value: "mix" },
-                    ]}
-                    value={formData.toyPreference}
-                    onChange={(value) =>
-                      setFormData({ ...formData, toyPreference: value })
-                    }
-                  />
+          <s-section heading="Preferences">
+            <s-stack direction="block" gap="base">
+              <s-select
+                label="Preferred Toy Type"
+                value={formData.toyPreference}
+                onChange={(e: any) =>
+                  setFormData({ ...formData, toyPreference: e.target.value })
+                }
+              >
+                <option value="plush">Plush Toys</option>
+                <option value="durable">Durable/Tough Toys</option>
+                <option value="mix">Mix of Both</option>
+              </s-select>
 
-                  <Select
-                    label="Any Allergies?"
-                    options={[
-                      { label: "None", value: "none" },
-                      { label: "Chicken", value: "chicken" },
-                      { label: "Turkey", value: "turkey" },
-                      { label: "Beef", value: "beef" },
-                      {
-                        label: "Multiple (specify in notes)",
-                        value: "multiple",
-                      },
-                    ]}
-                    value={formData.allergies}
-                    onChange={(value) =>
-                      setFormData({ ...formData, allergies: value })
-                    }
-                  />
-                </FormLayout.Group>
+              <s-select
+                label="Any Allergies?"
+                value={formData.allergies}
+                onChange={(e: any) =>
+                  setFormData({ ...formData, allergies: e.target.value })
+                }
+              >
+                <option value="none">None</option>
+                <option value="chicken">Chicken</option>
+                <option value="turkey">Turkey</option>
+                <option value="beef">Beef</option>
+                <option value="multiple">Multiple (specify in notes)</option>
+              </s-select>
+            </s-stack>
+          </s-section>
 
-                <FormLayout.Group title="Contact & Subscription">
-                  <TextField
-                    label="Email Address"
-                    type="email"
-                    value={formData.email}
-                    onChange={(value) =>
-                      setFormData({ ...formData, email: value })
-                    }
-                    autoComplete="email"
-                    requiredIndicator
-                  />
+          <s-section heading="Contact & Subscription">
+            <s-stack direction="block" gap="base">
+              <s-textfield
+                label="Email Address *"
+                type="email"
+                value={formData.email}
+                onInput={(e: any) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                required
+              />
 
-                  <Select
-                    label="Subscription Plan"
-                    options={[
-                      { label: "Monthly", value: "monthly" },
-                      { label: "6 Month Plan", value: "6-month" },
-                      { label: "12 Month Plan", value: "12-month" },
-                    ]}
-                    value={formData.subscriptionPlan}
-                    onChange={(value) =>
-                      setFormData({ ...formData, subscriptionPlan: value })
-                    }
-                  />
-                </FormLayout.Group>
+              <s-select
+                label="Subscription Plan"
+                value={formData.subscriptionPlan}
+                onChange={(e: any) =>
+                  setFormData({ ...formData, subscriptionPlan: e.target.value })
+                }
+              >
+                <option value="monthly">Monthly</option>
+                <option value="6-month">6 Month Plan</option>
+                <option value="12-month">12 Month Plan</option>
+              </s-select>
+            </s-stack>
+          </s-section>
 
-                <Button
-                  variant="primary"
-                  submit
-                  loading={isSubmitting}
-                  disabled={
-                    !formData.dogName ||
-                    !formData.breed ||
-                    !formData.email ||
-                    isSubmitting
-                  }
-                >
-                  Submit Questionnaire
-                </Button>
-              </FormLayout>
-            </Form>
-          </Card>
-        </Layout.Section>
-      </Layout>
-    </Page>
+          <s-button
+            variant="primary"
+            type="submit"
+            {...(isSubmitting ? { loading: true } : {})}
+            disabled={
+              !formData.dogName ||
+              !formData.breed ||
+              !formData.email ||
+              isSubmitting
+            }
+          >
+            Submit Questionnaire
+          </s-button>
+        </form>
+      </s-section>
+    </s-page>
   );
 }

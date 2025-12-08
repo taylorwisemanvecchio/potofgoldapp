@@ -2,7 +2,6 @@ import { type LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
 import { PrismaClient } from "@prisma/client";
 import { FeedbackQuestionnaire } from "../components/FeedbackQuestionnaire";
-import { Page, Banner } from "@shopify/polaris";
 
 const prisma = new PrismaClient();
 
@@ -49,14 +48,14 @@ export default function FeedbackPage() {
 
   if (products.length === 0) {
     return (
-      <Page title="Feedback">
-        <Banner title="No Pending Feedback" tone="info">
+      <s-page heading="Feedback">
+        <s-banner tone="info">
           <p>
             There are no items waiting for feedback at this time. Thank you for
             being a valued customer!
           </p>
-        </Banner>
-      </Page>
+        </s-banner>
+      </s-page>
     );
   }
 
