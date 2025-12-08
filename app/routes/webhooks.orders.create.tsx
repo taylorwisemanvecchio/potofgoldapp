@@ -1,4 +1,4 @@
-import { json, type ActionFunctionArgs } from "react-router";
+import { type ActionFunctionArgs } from "react-router";
 import { authenticate } from "../shopify.server";
 import { PrismaClient } from "@prisma/client";
 
@@ -23,9 +23,9 @@ export async function action({ request }: ActionFunctionArgs) {
     // Store order information for later processing
     // When questionnaire is submitted, we'll link it to this order
 
-    return json({ success: true });
+    return Response.json({ success: true });
   } catch (error) {
     console.error("Error processing order webhook:", error);
-    return json({ error: "Webhook processing failed" }, { status: 500 });
+    return Response.json({ error: "Webhook processing failed" }, { status: 500 });
   }
 }

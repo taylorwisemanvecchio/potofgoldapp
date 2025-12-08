@@ -1,4 +1,4 @@
-import { json, type LoaderFunctionArgs } from "react-router";
+import { type LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
 import { PrismaClient } from "@prisma/client";
 import { FeedbackQuestionnaire } from "../components/FeedbackQuestionnaire";
@@ -36,7 +36,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     imageUrl: fb.productImageUrl || undefined,
   }));
 
-  return json({
+  return Response.json({
     questionnaireId,
     dogName: questionnaire.dogName,
     products,

@@ -1,4 +1,4 @@
-import { json, type LoaderFunctionArgs, type ActionFunctionArgs } from "react-router";
+import { type LoaderFunctionArgs, type ActionFunctionArgs } from "react-router";
 import { useLoaderData, useActionData, Form } from "react-router";
 import {
   Page,
@@ -47,7 +47,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw new Response("Not Found", { status: 404 });
   }
 
-  return json({ questionnaire });
+  return Response.json({ questionnaire });
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -119,14 +119,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
       },
     });
 
-    return json({
+    return Response.json({
       success: true,
       recommendations,
       recommendationId: savedRecommendation.id,
     });
   } catch (error) {
     console.error("Error generating recommendations:", error);
-    return json(
+    return Response.json(
       {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",

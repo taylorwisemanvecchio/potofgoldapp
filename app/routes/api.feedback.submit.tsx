@@ -1,4 +1,4 @@
-import { json, type ActionFunctionArgs } from "react-router";
+import { type ActionFunctionArgs } from "react-router";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -9,7 +9,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const { questionnaireId, feedback } = formData;
 
     if (!questionnaireId || !feedback || !Array.isArray(feedback)) {
-      return json({ error: "Invalid request data" }, { status: 400 });
+      return Response.json({ error: "Invalid request data" }, { status: 400 });
     }
 
     // Verify questionnaire exists
@@ -18,7 +18,7 @@ export async function action({ request }: ActionFunctionArgs) {
     });
 
     if (!questionnaire) {
-      return json({ error: "Questionnaire not found" }, { status: 404 });
+      return Response.json({ error: "Questionnaire not found" }, { status: 404 });
     }
 
     // Save feedback for each product
@@ -39,12 +39,12 @@ export async function action({ request }: ActionFunctionArgs) {
       })
     );
 
-    return json({
+    return Response.json({
       success: true,
       feedbackCount: savedFeedback.length,
     });
   } catch (error) {
     console.error("Error submitting feedback:", error);
-    return json({ error: "Failed to submit feedback" }, { status: 500 });
+    return Response.json({ error: "Failed to submit feedback" }, { status: 500 });
   }
 }
