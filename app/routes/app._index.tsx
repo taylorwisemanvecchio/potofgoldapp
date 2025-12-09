@@ -88,9 +88,7 @@ export default function Index() {
   const shopify = useAppBridge();
 
   const navigateToSubscriptions = () => {
-    shopify.intents.invoke?.("redirect", {
-      path: "/app/subscriptions",
-    });
+    window.location.href = "/app/subscriptions";
   };
 
   return (

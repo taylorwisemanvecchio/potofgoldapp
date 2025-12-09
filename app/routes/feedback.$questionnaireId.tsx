@@ -43,8 +43,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export default function FeedbackPage() {
-  const { questionnaireId, dogName, products } =
-    useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>() as any;
+  const { questionnaireId, dogName, products } = data;
 
   if (products.length === 0) {
     return (
