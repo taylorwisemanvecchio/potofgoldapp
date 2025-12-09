@@ -1,18 +1,4 @@
 import { useState } from "react";
-import {
-  Form,
-  FormLayout,
-  TextField,
-  Button,
-  Card,
-  Layout,
-  Page,
-  Banner,
-  Text,
-  BlockStack,
-  InlineStack,
-  Box,
-} from "@shopify/polaris";
 
 interface Product {
   id: string;
@@ -28,6 +14,7 @@ interface FeedbackQuestionnaireProps {
 
 interface ProductFeedback {
   productId: string;
+  productTitle: string;
   rating: number;
   comments: string;
 }
@@ -46,6 +33,7 @@ export function FeedbackQuestionnaire({
 
   const updateFeedback = (
     productId: string,
+    productTitle: string,
     field: keyof ProductFeedback,
     value: any
   ) => {
@@ -54,8 +42,9 @@ export function FeedbackQuestionnaire({
       [productId]: {
         ...prev[productId],
         productId,
+        productTitle,
         [field]: value,
-      },
+      } as ProductFeedback,
     }));
   };
 
@@ -91,113 +80,111 @@ export function FeedbackQuestionnaire({
 
   if (submitSuccess) {
     return (
-      <Page title="Feedback Submitted">
-        <Layout>
-          <Layout.Section>
-            <Banner
-              title="Thank you for your feedback!"
-              tone="success"
-              onDismiss={() => setSubmitSuccess(false)}
-            >
-              <p>
-                We appreciate you taking the time to let us know how {dogName}{" "}
-                enjoyed their box. This helps us make the next one even better!
-              </p>
-            </Banner>
-          </Layout.Section>
-        </Layout>
-      </Page>
+      <s-page heading="Feedback Submitted">
+        <s-banner tone="success">
+          <p>
+            Thank you for your feedback! We appreciate you taking the time to
+            let us know how {dogName} enjoyed their box. This helps us make the
+            next one even better!
+          </p>
+        </s-banner>
+      </s-page>
     );
   }
 
   return (
-    <Page title={`How did ${dogName} like each item? 🐕`}>
-      <Layout>
-        <Layout.Section>
-          {submitError && (
-            <Banner title="Error" tone="critical">
-              <p>{submitError}</p>
-            </Banner>
-          )}
+    <s-page heading={`How did ${dogName} like each item? 🐕`}>
+      {submitError && (
+        <s-banner tone="critical">
+          <p>{submitError}</p>
+        </s-banner>
+      )}
 
-          <BlockStack gap="400">
-            <Text as="p" variant="bodyMd">
-              Please rate each product and share your thoughts. Your feedback
-              helps us curate the perfect boxes for {dogName}!
-            </Text>
+      <s-section>
+        <p style={{ marginBottom: "1rem" }}>
+          Please rate each product and share your thoughts. Your feedback helps
+          us curate the perfect boxes for {dogName}!
+        </p>
 
-            {products.map((product) => (
-              <Card key={product.id}>
-                <BlockStack gap="400">
-                  {product.imageUrl && (
-                    <Box>
-                      <img
-                        src={product.imageUrl}
-                        alt={product.title}
-                        style={{
-                          maxWidth: "100%",
-                          height: "auto",
-                          borderRadius: "8px",
-                        }}
-                      />
-                    </Box>
-                  )}
-
-                  <Text as="h2" variant="headingMd">
-                    {product.title}
-                  </Text>
-
-                  <FormLayout>
-                    <div>
-                      <Text as="p" variant="bodyMd">
-                        Rating (1-5 stars)
-                      </Text>
-                      <InlineStack gap="200">
-                        {[1, 2, 3, 4, 5].map((rating) => (
-                          <Button
-                            key={rating}
-                            variant={
-                              feedback[product.id]?.rating === rating
-                                ? "primary"
-                                : "secondary"
-                            }
-                            onClick={() =>
-                              updateFeedback(product.id, "rating", rating)
-                            }
-                          >
-                            {rating} ⭐
-                          </Button>
-                        ))}
-                      </InlineStack>
-                    </div>
-
-                    <TextField
-                      label="Comments (optional)"
-                      value={feedback[product.id]?.comments || ""}
-                      onChange={(value) =>
-                        updateFeedback(product.id, "comments", value)
-                      }
-                      multiline={3}
-                      autoComplete="off"
-                      placeholder={`Tell us what ${dogName} thought about this toy...`}
-                    />
-                  </FormLayout>
-                </BlockStack>
-              </Card>
-            ))}
-
-            <Button
-              variant="primary"
-              onClick={handleSubmit}
-              loading={isSubmitting}
-              disabled={isSubmitting}
-              size="large"
+        <s-stack direction="block" gap="large">
+          {products.map((product) => (
+            <s-box
+              key={product.id}
+              padding="large"
+              borderWidth="base"
+              borderRadius="base"
             >
-              Submit Feedback
-            </Button>
-          </BlockStack>
-        </Layout.Section>
-      </Layout>
-    </Page>
+              <s-stack direction="block" gap="base">
+                {product.imageUrl && (
+                  <img
+                    src={product.imageUrl}
+                    alt={product.title}
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                      borderRadius: "8px",
+                    }}
+                  />
+                )}
+
+                <h3 style={{ margin: "0.5rem 0" }}>{product.title}</h3>
+
+                <div>
+                  <p style={{ marginBottom: "0.5rem", fontWeight: "500" }}>
+                    Rating (1-5 stars)
+                  </p>
+                  <s-stack direction="inline" gap="small">
+                    {[1, 2, 3, 4, 5].map((rating) => (
+                      <s-button
+                        key={rating}
+                        variant={
+                          feedback[product.id]?.rating === rating
+                            ? "primary"
+                            : "secondary"
+                        }
+                        onClick={() =>
+                          updateFeedback(
+                            product.id,
+                            product.title,
+                            "rating",
+                            rating
+                          )
+                        }
+                      >
+                        {rating} ⭐
+                      </s-button>
+                    ))}
+                  </s-stack>
+                </div>
+
+                <s-textfield
+                  label="Comments (optional)"
+                  value={feedback[product.id]?.comments || ""}
+                  onInput={(e: any) =>
+                    updateFeedback(
+                      product.id,
+                      product.title,
+                      "comments",
+                      e.target.value
+                    )
+                  }
+                  multiline
+                  placeholder={`Tell us what ${dogName} thought about this toy...`}
+                />
+              </s-stack>
+            </s-box>
+          ))}
+
+          <s-button
+            variant="primary"
+            onClick={handleSubmit}
+            {...(isSubmitting ? { loading: true } : {})}
+            disabled={isSubmitting}
+          >
+            Submit Feedback
+          </s-button>
+        </s-stack>
+      </s-section>
+    </s-page>
   );
 }

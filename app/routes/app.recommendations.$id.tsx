@@ -1,15 +1,5 @@
 import { type LoaderFunctionArgs, type ActionFunctionArgs } from "react-router";
 import { useLoaderData, useActionData, Form } from "react-router";
-import {
-  Page,
-  Layout,
-  Card,
-  Text,
-  BlockStack,
-  Button,
-  Banner,
-  List,
-} from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 import { PrismaClient } from "@prisma/client";
 import { getProducts } from "../services/shopify.server";
@@ -146,126 +136,88 @@ export default function Recommendations() {
     : null;
 
   return (
-    <Page
-      title={`AI Recommendations for ${questionnaire.dogName}`}
-      backAction={{ url: "/app/subscriptions" }}
-    >
-      <Layout>
-        <Layout.Section>
-          <Card>
-            <BlockStack gap="400">
-              <Text as="h2" variant="headingMd">
-                Dog Profile
-              </Text>
-              <List>
-                <List.Item>
-                  <strong>Name:</strong> {questionnaire.dogName}
-                </List.Item>
-                <List.Item>
-                  <strong>Breed:</strong> {questionnaire.breed}
-                </List.Item>
-                <List.Item>
-                  <strong>Size:</strong> {questionnaire.dogSize}
-                </List.Item>
-                <List.Item>
-                  <strong>Toy Preference:</strong> {questionnaire.toyPreference}
-                </List.Item>
-                <List.Item>
-                  <strong>Allergies:</strong> {questionnaire.allergies}
-                </List.Item>
-                <List.Item>
-                  <strong>Plan:</strong> {questionnaire.subscriptionPlan}
-                </List.Item>
-              </List>
+    <s-page heading={`AI Recommendations for ${questionnaire.dogName}`}>
+      <s-link slot="back-action" href="/app/subscriptions">Back</s-link>
 
-              {questionnaire.feedbacks.length > 0 && (
-                <>
-                  <Text as="h3" variant="headingMd">
-                    Feedback History ({questionnaire.feedbacks.length} items)
-                  </Text>
-                  <List>
-                    {questionnaire.feedbacks.slice(0, 5).map((fb) => (
-                      <List.Item key={fb.id}>
-                        {fb.productTitle} -{" "}
-                        {fb.rating ? `${fb.rating}⭐` : "No rating"}
-                        {fb.comments && ` - "${fb.comments}"`}
-                      </List.Item>
-                    ))}
-                  </List>
-                </>
-              )}
-            </BlockStack>
-          </Card>
-        </Layout.Section>
+      <s-section heading="Dog Profile">
+        <s-stack direction="block" gap="small">
+          <p><strong>Name:</strong> {questionnaire.dogName}</p>
+          <p><strong>Breed:</strong> {questionnaire.breed}</p>
+          <p><strong>Size:</strong> {questionnaire.dogSize}</p>
+          <p><strong>Toy Preference:</strong> {questionnaire.toyPreference}</p>
+          <p><strong>Allergies:</strong> {questionnaire.allergies}</p>
+          <p><strong>Plan:</strong> {questionnaire.subscriptionPlan}</p>
+        </s-stack>
 
-        <Layout.Section>
-          <Card>
-            <BlockStack gap="400">
-              <Text as="h2" variant="headingMd">
-                Generate AI Product Recommendations
-              </Text>
-
-              <Form method="post">
-                <Button submit variant="primary">
-                  🤖 Generate Recommendations with AI
-                </Button>
-              </Form>
-
-              {actionData?.error && (
-                <Banner title="Error" tone="critical">
-                  <p>{actionData.error}</p>
-                </Banner>
-              )}
-
-              {actionData?.success && actionData.recommendations && (
-                <Banner title="Recommendations Generated!" tone="success">
-                  <p>
-                    AI has generated {actionData.recommendations.length}{" "}
-                    product recommendations for {questionnaire.dogName}.
-                  </p>
-                </Banner>
-              )}
-            </BlockStack>
-          </Card>
-        </Layout.Section>
-
-        {(recommendations || actionData?.recommendations) && (
-          <Layout.Section>
-            <Card>
-              <BlockStack gap="400">
-                <Text as="h2" variant="headingMd">
-                  Latest AI Recommendations
-                </Text>
-
-                {latestRecommendation && (
-                  <Text as="p" variant="bodySm" tone="subdued">
-                    Generated on{" "}
-                    {new Date(latestRecommendation.createdAt).toLocaleString()}
-                  </Text>
-                )}
-
-                {(actionData?.recommendations || recommendations).map(
-                  (rec: any, index: number) => (
-                    <Card key={index}>
-                      <BlockStack gap="200">
-                        <Text as="h3" variant="headingSm">
-                          {index + 1}. {rec.productTitle}
-                        </Text>
-                        <Text as="p" variant="bodyMd">
-                          {rec.reasoning}
-                        </Text>
-                        <Text as="p" variant="bodySm" tone="subdued">
-                          Confidence: {Math.round(rec.confidence * 100)}%
-                        </Text>
-                      </BlockStack>
-                    </Card>
-                  )
-                )}
-              </BlockStack>
-            </Card>
-          </Layout.Section>
+        {questionnaire.feedbacks.length > 0 && (
+          <s-stack direction="block" gap="small" style={{ marginTop: "1rem" }}>
+            <h3>Feedback History ({questionnaire.feedbacks.length} items)</h3>
+            <ul style={{ marginLeft: "1.5rem" }}>
+              {questionnaire.feedbacks.slice(0, 5).map((fb) => (
+                <li key={fb.id}>
+                  {fb.productTitle} - {fb.rating ? `${fb.rating}⭐` : "No rating"}
+                  {fb.comments && ` - "${fb.comments}"`}
+                </li>
+              ))}
+            </ul>
+          </s-stack>
         )}
-      </Layout>
-    </Page>
+      </s-section>
+
+      <s-section heading="Generate AI Product Recommendations">
+        <Form method="post">
+          <s-button type="submit" variant="primary">
+            🤖 Generate Recommendations with AI
+          </s-button>
+        </Form>
+
+        {actionData?.error && (
+          <s-banner tone="critical" style={{ marginTop: "1rem" }}>
+            <p>{actionData.error}</p>
+          </s-banner>
+        )}
+
+        {actionData?.success && actionData.recommendations && (
+          <s-banner tone="success" style={{ marginTop: "1rem" }}>
+            <p>
+              AI has generated {actionData.recommendations.length} product
+              recommendations for {questionnaire.dogName}.
+            </p>
+          </s-banner>
+        )}
+      </s-section>
+
+      {(recommendations || actionData?.recommendations) && (
+        <s-section heading="Latest AI Recommendations">
+          {latestRecommendation && (
+            <p style={{ color: "#666", fontSize: "14px", marginBottom: "1rem" }}>
+              Generated on{" "}
+              {new Date(latestRecommendation.createdAt).toLocaleString()}
+            </p>
+          )}
+
+          <s-stack direction="block" gap="base">
+            {(actionData?.recommendations || recommendations).map(
+              (rec: any, index: number) => (
+                <s-box
+                  key={index}
+                  padding="base"
+                  borderWidth="base"
+                  borderRadius="base"
+                >
+                  <h3 style={{ margin: "0 0 0.5rem 0" }}>
+                    {index + 1}. {rec.productTitle}
+                  </h3>
+                  <p style={{ margin: "0 0 0.5rem 0" }}>{rec.reasoning}</p>
+                  <p style={{ color: "#666", fontSize: "14px", margin: 0 }}>
+                    Confidence: {Math.round(rec.confidence * 100)}%
+                  </p>
+                </s-box>
+              )
+            )}
+          </s-stack>
+        </s-section>
+      )}
+    </s-page>
   );
 }
