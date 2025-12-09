@@ -78,7 +78,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
         rating: fb.rating || undefined,
         comments: fb.comments || undefined,
       })),
-      availableProducts: products.map((p) => ({
+      availableProducts: products.map((p: any) => ({
         id: p.id,
         title: p.title,
         description: p.description || "",
@@ -127,8 +127,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function Recommendations() {
-  const { questionnaire } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
+  const data = useLoaderData<typeof loader>() as any;
+  const questionnaire = data.questionnaire;
+  const actionData = useActionData<typeof action>() as any;
 
   const latestRecommendation = questionnaire.aiRecommendations[0];
   const recommendations = latestRecommendation
@@ -150,17 +151,17 @@ export default function Recommendations() {
         </s-stack>
 
         {questionnaire.feedbacks.length > 0 && (
-          <s-stack direction="block" gap="small" style={{ marginTop: "1rem" }}>
+          <div style={{ marginTop: "1rem" }}>
             <h3>Feedback History ({questionnaire.feedbacks.length} items)</h3>
             <ul style={{ marginLeft: "1.5rem" }}>
-              {questionnaire.feedbacks.slice(0, 5).map((fb) => (
+              {questionnaire.feedbacks.slice(0, 5).map((fb: any) => (
                 <li key={fb.id}>
                   {fb.productTitle} - {fb.rating ? `${fb.rating}⭐` : "No rating"}
                   {fb.comments && ` - "${fb.comments}"`}
                 </li>
               ))}
             </ul>
-          </s-stack>
+          </div>
         )}
       </s-section>
 
@@ -172,18 +173,22 @@ export default function Recommendations() {
         </Form>
 
         {actionData?.error && (
-          <s-banner tone="critical" style={{ marginTop: "1rem" }}>
-            <p>{actionData.error}</p>
-          </s-banner>
+          <div style={{ marginTop: "1rem" }}>
+            <s-banner tone="critical">
+              <p>{actionData.error}</p>
+            </s-banner>
+          </div>
         )}
 
         {actionData?.success && actionData.recommendations && (
-          <s-banner tone="success" style={{ marginTop: "1rem" }}>
-            <p>
-              AI has generated {actionData.recommendations.length} product
-              recommendations for {questionnaire.dogName}.
-            </p>
-          </s-banner>
+          <div style={{ marginTop: "1rem" }}>
+            <s-banner tone="success">
+              <p>
+                AI has generated {actionData.recommendations.length} product
+                recommendations for {questionnaire.dogName}.
+              </p>
+            </s-banner>
+          </div>
         )}
       </s-section>
 

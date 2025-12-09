@@ -23,7 +23,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Subscriptions() {
-  const { subscriptions } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>() as any;
+  const subscriptions = data.subscriptions;
 
   return (
     <s-page heading="🐕 Dog Subscriptions">
@@ -51,7 +52,7 @@ export default function Subscriptions() {
                 </tr>
               </thead>
               <tbody>
-                {subscriptions.map((sub) => (
+                {subscriptions.map((sub: any) => (
                   <tr
                     key={sub.id}
                     style={{ borderBottom: "1px solid #f1f2f3" }}
@@ -85,7 +86,7 @@ export default function Subscriptions() {
                     </td>
                     <td style={{ padding: "12px" }}>
                       <Link to={`/app/recommendations/${sub.id}`}>
-                        <s-button variant="tertiary" size="small">
+                        <s-button variant="tertiary">
                           AI Recommendations
                         </s-button>
                       </Link>
